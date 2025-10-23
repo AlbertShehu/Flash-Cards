@@ -217,7 +217,9 @@ export default function FlashCalculationTrainer({ settings }) {
                 #4facfe 100%)`,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
+              backgroundClip: 'text',
+              lineHeight: '1.2',
+              paddingBottom: '2px'
             }}
             animate={{
               backgroundPosition: ["0%", "100%", "0%"]
