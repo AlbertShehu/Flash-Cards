@@ -47,48 +47,6 @@ A modern, interactive web application for training mental calculation skills usi
 - 🇺🇸 English
 - 🇩🇪 Deutsch
 
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 16+ 
-- npm or yarn
-
-### Installation
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/AlbertShehu/Flash-Cards.git
-cd Flash-Cards
-```
-
-2. **Install dependencies**
-```bash
-npm install
-```
-
-3. **Start development server**
-```bash
-npm run dev
-```
-
-4. **Open in browser**
-```
-http://localhost:5173
-```
-
-## 📦 Build for Production
-
-```bash
-npm run build
-```
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-This project is licensed under the MIT License.
 
 ## 👨‍💻 Developer
 
