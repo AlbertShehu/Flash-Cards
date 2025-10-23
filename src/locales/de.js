@@ -14,7 +14,8 @@ export default {
     no: "Nein",
     loading: "Lädt...",
     error: "Fehler",
-    success: "Erfolg"
+    success: "Erfolg",
+    backToHome: "Zurück zur Startseite"
   },
   navigation: {
     flashCalculation: "Blitz-Berechnung",

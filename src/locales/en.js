@@ -14,7 +14,8 @@ export default {
     no: "No",
     loading: "Loading...",
     error: "Error",
-    success: "Success"
+    success: "Success",
+    backToHome: "Back to Home"
   },
   navigation: {
     flashCalculation: "Flash Calculation",

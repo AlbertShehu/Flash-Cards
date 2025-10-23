@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Zap, Play, Pause } from 'lucide-react';
+import { Zap, Play, Pause, Home } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import CalculationTable from '../../components/CalculationTable.jsx';
 import Footer from '../../components/Footer.jsx';
 import { getSpeedTable } from '../../utils/speed.js';
@@ -231,6 +232,24 @@ export default function FlashCalculationTrainer({ settings }) {
           </motion.span>
         </motion.h2>
 
+        {/* Back to Home Button */}
+        <motion.div 
+          className="flex justify-center mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <Link to="/">
+            <motion.button
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              className="btn-secondary flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white/80 hover:bg-white hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md"
+            >
+              <Home className="w-4 h-4" />
+              {t('common.backToHome')}
+            </motion.button>
+          </Link>
+        </motion.div>
 
         <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 mb-8">
           {!isRunning ? (
