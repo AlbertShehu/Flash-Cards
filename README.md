@@ -12,9 +12,7 @@ A modern, interactive web application for training mental calculation skills usi
 - **History Tracking** - Keep track of your progress
 - **Audio Feedback** - Optional sound effects
 
-## 🚀 Live Demo
 
-[View Live Demo](https://your-demo-url.com)
 
 ## 🛠️ Tech Stack
 
