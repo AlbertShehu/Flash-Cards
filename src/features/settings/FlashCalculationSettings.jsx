@@ -63,7 +63,7 @@ function AnimatedNumberInput({ value, min = 0, max = 999, step = 1, onChange, cl
         whileTap={{ scale: 0.9 }}
         whileHover={{ y: -1 }}
         onClick={dec}
-        className="px-2 py-1 rounded-lg border bg-white/70 hover:bg-white"
+        className="px-2 py-1 rounded-lg border border-gray-300/50 bg-white/70 hover:bg-white shadow-sm hover:shadow-md"
         aria-label="Decrease"
       >
         −
@@ -100,7 +100,7 @@ function AnimatedNumberInput({ value, min = 0, max = 999, step = 1, onChange, cl
               e.preventDefault();
             }
           }}
-          className="input w-24 sm:w-20 text-center font-semibold text-base sm:text-sm"
+          className="input w-24 sm:w-20 text-center font-semibold text-base sm:text-sm border border-gray-300/50 shadow-sm focus:shadow-md focus:border-blue-400/50"
           style={{ fontSize: '16px' }} // Prevent zoom on iOS
         />
         <AnimatePresence>
@@ -121,7 +121,7 @@ function AnimatedNumberInput({ value, min = 0, max = 999, step = 1, onChange, cl
         whileTap={{ scale: 0.9 }}
         whileHover={{ y: -1 }}
         onClick={inc}
-        className="px-2 py-1 rounded-lg border bg-white/70 hover:bg-white"
+        className="px-2 py-1 rounded-lg border border-gray-300/50 bg-white/70 hover:bg-white shadow-sm hover:shadow-md"
         aria-label="Increase"
       >
         +
@@ -133,7 +133,7 @@ function AnimatedNumberInput({ value, min = 0, max = 999, step = 1, onChange, cl
 // ====== Radio as "pill switcher" (po/jo & gjuha) ======
 function PillRadio({ name, options, value, onChange }) {
   return (
-    <div className="relative inline-flex p-1 rounded-xl bg-gray-100 border">
+    <div className="relative inline-flex p-1 rounded-xl bg-gray-100 border border-gray-200/50 shadow-sm">
       {/* background animated pill */}
       <div className="relative flex">
         {options.map((opt) => (
@@ -158,7 +158,7 @@ function PillRadio({ name, options, value, onChange }) {
             {value === opt.value && (
               <motion.span
                 layoutId={`${name}-pill`}
-                className="absolute inset-0 rounded-lg bg-white shadow"
+                className="absolute inset-0 rounded-lg bg-white shadow-md shadow-gray-200/30"
                 transition={{ type: 'spring', stiffness: 350, damping: 30 }}
               />
             )}
@@ -202,17 +202,17 @@ export default function FlashCalculationSettings({ settings, onChange }) {
 
   return (
     <motion.div
-      className="glass-effect rounded-xl p-6 space-y-5"
+      className="glass-effect rounded-xl p-6 space-y-5 border border-gray-200/50 shadow-lg shadow-gray-200/20"
       variants={listVariants}
       initial="hidden"
       animate="show"
     >
-      <motion.h3 className="font-semibold text-lg flex items-center gap-2" variants={cardVariants}>
+      <motion.h3 className="font-semibold text-lg flex items-center gap-2 pb-3 border-b border-gray-200/30 shadow-sm" variants={cardVariants}>
         {t('settings.flashCalculation.title')}
         <motion.span
           initial={{ opacity: 0, x: -6 }}
           animate={{ opacity: 1, x: 0 }}
-          className="px-2 py-0.5 text-[11px] rounded bg-blue-50 text-blue-700 border border-blue-200"
+          className="px-2 py-0.5 text-[11px] rounded bg-blue-50 text-blue-700 border border-blue-200 shadow-sm"
         >
           Live
         </motion.span>
@@ -246,7 +246,7 @@ export default function FlashCalculationSettings({ settings, onChange }) {
         <select
           value={settings.speedFlashCalculation}
           onChange={(e) => set('speedFlashCalculation', Number(e.target.value))}
-          className="input"
+          className="input border border-gray-300/50 shadow-sm focus:shadow-md focus:border-blue-400/50"
         >
           {speedOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -256,7 +256,7 @@ export default function FlashCalculationSettings({ settings, onChange }) {
         </select>
         <motion.button
           onClick={() => setShowSpeedEditor(true)}
-          className="ml-2 px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg border"
+          className="ml-2 px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg border border-gray-300/50 shadow-sm hover:shadow-md"
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.96 }}
           animate={{ boxShadow: ['0 0 0 0 rgba(59,130,246,0)', '0 0 0 8px rgba(59,130,246,0.0)'] }}
@@ -338,7 +338,7 @@ export default function FlashCalculationSettings({ settings, onChange }) {
       </motion.label>
 
       {/* Language */}
-      <motion.div className="pt-4 border-t border-gray-200" variants={cardVariants}>
+      <motion.div className="pt-4 border-t border-gray-200/50 shadow-sm" variants={cardVariants}>
         <div className="space-y-3">
           
           <PillRadio
