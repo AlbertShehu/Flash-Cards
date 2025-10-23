@@ -7,7 +7,7 @@ import CalculationTable from '../../components/CalculationTable.jsx';
 import Footer from '../../components/Footer.jsx';
 import { getSpeedTable } from '../../utils/speed.js';
 import { generateNumber } from '../../utils/random.js';
-import { resumeAudio } from '../../utils/audio.js';
+import { resumeAudio, initAudioForMobile } from '../../utils/audio.js';
 import { addHistoryEntry } from '../../components/History.jsx';
 import { useEffect } from 'react';
 
@@ -63,8 +63,11 @@ export default function FlashCalculationTrainer({ settings }) {
   }, []);
 
   const start = useCallback(async () => {
-    // Siguron që audio të jetë "running" pas një gesture
-    await resumeAudio();
+    // Initialize audio for mobile compatibility
+    if (settings.enableAudio) {
+      await initAudioForMobile();
+      await resumeAudio();
+    }
     
     const newSequence = [];
     let runningSum = 0;

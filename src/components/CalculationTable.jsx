@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import NumberDisplay from './NumberDisplay.jsx';
 import Result from './Result.jsx';
-import { resumeAudio, playHeartbeatBeep, playSuccessChime } from '../utils/audio.js';
+import { resumeAudio, playHeartbeatBeep, playSuccessChime, initAudioForMobile } from '../utils/audio.js';
 
 export default function CalculationTable({ 
   phase, 
@@ -28,11 +28,14 @@ export default function CalculationTable({
     const canPlay = phase === 'result' && showResult && settings.enableAudio;
 
     if (canPlay && !successPlayedRef.current) {
-      // siguro që AudioContext është "running" (policy e shfletuesve)
-      resumeAudio();
-      // 🎉 luaj chime suksesi (pip-pip)
-      playSuccessChime();
-      successPlayedRef.current = true;
+      // Initialize audio for mobile compatibility
+      initAudioForMobile().then(() => {
+        // siguro që AudioContext është "running" (policy e shfletuesve)
+        resumeAudio();
+        // 🎉 luaj chime suksesi (pip-pip)
+        playSuccessChime();
+        successPlayedRef.current = true;
+      });
     }
 
     // ri-lejo tingullin kur dalim nga faza e rezultatit
@@ -49,21 +52,24 @@ export default function CalculationTable({
         // Check if this is the last number
         const isLastNumber = currentIndex === currentSequence.length - 1;
         
-        if (isLastNumber) {
-          // Different tone for the last number - higher and longer
-          playHeartbeatBeep({
-            startHz: 1200,
-            endHz: 1000,
-            durationMs: 1000,
-            volume: 0.4,
-            wave: 'triangle',
-            bandHz: 1600,
-            q: 10
-          });
-        } else {
-          // Regular heartbeat beep for other numbers
-          playHeartbeatBeep();
-        }
+        // Initialize audio for mobile compatibility
+        initAudioForMobile().then(() => {
+          if (isLastNumber) {
+            // Different tone for the last number - higher and longer
+            playHeartbeatBeep({
+              startHz: 1200,
+              endHz: 1000,
+              durationMs: 1000,
+              volume: 0.4,
+              wave: 'triangle',
+              bandHz: 1600,
+              q: 10
+            });
+          } else {
+            // Regular heartbeat beep for other numbers
+            playHeartbeatBeep();
+          }
+        });
       }, 300); // 300ms delay për të sinkronizuar me animacionin
 
       return () => clearTimeout(audioDelay);

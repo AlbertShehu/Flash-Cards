@@ -26,10 +26,35 @@ function useValuePulse(value, duration = 500) {
 
 // ====== Animated numeric input (+/-) ======
 function AnimatedNumberInput({ value, min = 0, max = 999, step = 1, onChange, className = '' }) {
+  const [inputValue, setInputValue] = useState(value.toString());
   const pulse = useValuePulse(value, 450);
+
+  // Update input value when prop value changes
+  useEffect(() => {
+    setInputValue(value.toString());
+  }, [value]);
 
   const inc = () => onChange(Math.min(max, value + step));
   const dec = () => onChange(Math.max(min, value - step));
+
+  const handleInputChange = (e) => {
+    const newValue = e.target.value;
+    setInputValue(newValue);
+    
+    // Only update parent if it's a valid number
+    const numValue = Number(newValue);
+    if (!isNaN(numValue) && numValue >= min && numValue <= max) {
+      onChange(numValue);
+    }
+  };
+
+  const handleBlur = () => {
+    // Reset to current value if input is invalid
+    const numValue = Number(inputValue);
+    if (isNaN(numValue) || numValue < min || numValue > max) {
+      setInputValue(value.toString());
+    }
+  };
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
@@ -53,11 +78,30 @@ function AnimatedNumberInput({ value, min = 0, max = 999, step = 1, onChange, cl
       >
         <input
           type="number"
-          value={value}
+          value={inputValue}
           min={min}
           max={max}
-          onChange={(e) => onChange(Number(e.target.value))}
-          className="input w-20 text-center font-semibold"
+          onChange={handleInputChange}
+          onBlur={handleBlur}
+          onKeyDown={(e) => {
+            // Allow backspace, delete, tab, escape, enter
+            if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
+                // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                (e.keyCode === 65 && e.ctrlKey === true) ||
+                (e.keyCode === 67 && e.ctrlKey === true) ||
+                (e.keyCode === 86 && e.ctrlKey === true) ||
+                (e.keyCode === 88 && e.ctrlKey === true) ||
+                // Allow home, end, left, right
+                (e.keyCode >= 35 && e.keyCode <= 40)) {
+              return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+              e.preventDefault();
+            }
+          }}
+          className="input w-24 sm:w-20 text-center font-semibold text-base sm:text-sm"
+          style={{ fontSize: '16px' }} // Prevent zoom on iOS
         />
         <AnimatePresence>
           {pulse && (

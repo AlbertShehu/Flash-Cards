@@ -12,7 +12,46 @@ export function getAudioContext() {
 
 export async function resumeAudio() {
   const ctx = getAudioContext();
-  if (ctx && ctx.state === 'suspended') { try { await ctx.resume(); } catch {} }
+  if (ctx && ctx.state === 'suspended') { 
+    try { 
+      await ctx.resume(); 
+    } catch (e) {
+      console.warn('Audio context resume failed:', e);
+    }
+  }
+}
+
+// Mobile-friendly audio initialization
+export async function initAudioForMobile() {
+  if (typeof window === 'undefined') return false;
+  
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return false;
+    
+    // For mobile, we need user interaction to start audio
+    if (ctx.state === 'suspended') {
+      await ctx.resume();
+    }
+    
+    // Test audio with a very short, silent tone
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    
+    oscillator.frequency.setValueAtTime(440, ctx.currentTime);
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    
+    oscillator.start();
+    oscillator.stop(ctx.currentTime + 0.001);
+    
+    return true;
+  } catch (e) {
+    console.warn('Mobile audio initialization failed:', e);
+    return false;
+  }
 }
 
 // ✅ Lejon start të planifikuar me startAt (sekonda absolute në AudioContext)
