@@ -23,9 +23,7 @@ A modern, interactive web application for training mental calculation skills usi
 - **React Router** - Client-side routing
 - **i18next** - Internationalization
 
-## 📱 Screenshots
 
-![Flash Cards App](screenshot.png)
 
 ## 🎯 How to Use
 
