@@ -21,6 +21,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
+    lng: 'en', // Force English as default language
     fallbackLng: 'en',
     debug: false,
     

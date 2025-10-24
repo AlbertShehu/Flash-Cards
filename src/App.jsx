@@ -17,6 +17,13 @@ export default function App() {
     saveSettings(settings);
   }, [settings]);
 
+  // Ensure English is the default language on app start
+  useEffect(() => {
+    if (settings.language !== 'english') {
+      setSettings(prev => ({ ...prev, language: 'english' }));
+    }
+  }, []);
+
   // Global audio unlock on first user interaction
   useEffect(() => {
     const handler = () => unlockAudio();

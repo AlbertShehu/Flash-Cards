@@ -63,7 +63,7 @@ function AnimatedNumberInput({ value, min = 0, max = 999, step = 1, onChange, cl
         whileTap={{ scale: 0.9 }}
         whileHover={{ y: -1 }}
         onClick={dec}
-        className="px-2 py-1 rounded-lg border border-gray-300/50 bg-white/70 hover:bg-white shadow-sm hover:shadow-md"
+        className="px-3 py-2 rounded-lg border border-gray-300/50 bg-white/70 hover:bg-white shadow-sm hover:shadow-md text-lg"
         aria-label="Decrease"
       >
         −
@@ -100,8 +100,8 @@ function AnimatedNumberInput({ value, min = 0, max = 999, step = 1, onChange, cl
               e.preventDefault();
             }
           }}
-          className="input w-24 sm:w-20 text-center font-semibold text-base sm:text-sm border border-gray-300/50 shadow-sm focus:shadow-md focus:border-blue-400/50"
-          style={{ fontSize: '16px' }} // Prevent zoom on iOS
+          className="input w-28 sm:w-20 text-center font-semibold text-lg sm:text-base border border-gray-300/50 shadow-sm focus:shadow-md focus:border-blue-400/50"
+          style={{ fontSize: '18px' }} // Larger font for mobile, prevent zoom on iOS
         />
         <AnimatePresence>
           {pulse && (
@@ -121,7 +121,7 @@ function AnimatedNumberInput({ value, min = 0, max = 999, step = 1, onChange, cl
         whileTap={{ scale: 0.9 }}
         whileHover={{ y: -1 }}
         onClick={inc}
-        className="px-2 py-1 rounded-lg border border-gray-300/50 bg-white/70 hover:bg-white shadow-sm hover:shadow-md"
+        className="px-3 py-2 rounded-lg border border-gray-300/50 bg-white/70 hover:bg-white shadow-sm hover:shadow-md text-lg"
         aria-label="Increase"
       >
         +
@@ -207,16 +207,7 @@ export default function FlashCalculationSettings({ settings, onChange }) {
       initial="hidden"
       animate="show"
     >
-      <motion.h3 className="font-semibold text-lg flex items-center gap-2 pb-3 border-b border-gray-200/30 shadow-sm" variants={cardVariants}>
-        {t('settings.flashCalculation.title')}
-        <motion.span
-          initial={{ opacity: 0, x: -6 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="px-2 py-0.5 text-[11px] rounded bg-blue-50 text-blue-700 border border-blue-200 shadow-sm"
-        >
-          Live
-        </motion.span>
-      </motion.h3>
+     
 
       {/* Digit length */}
       <motion.label className="flex items-center gap-2" variants={cardVariants} whileHover={{ y: -2 }}>
@@ -338,7 +329,7 @@ export default function FlashCalculationSettings({ settings, onChange }) {
       </motion.label>
 
       {/* Language */}
-      <motion.div className="pt-4 border-t border-gray-200/50 shadow-sm" variants={cardVariants}>
+      <motion.div  variants={cardVariants}>
         <div className="space-y-3">
           
           <PillRadio
