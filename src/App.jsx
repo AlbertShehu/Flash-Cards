@@ -6,6 +6,7 @@ import defaultSettings from './config/settings.js';
 import FlashCalculationTrainer from './features/flashcalculation/FlashCalculationTrainer.jsx';
 import SettingsPanel from './features/settings/SettingsPanel.jsx';
 import { loadSettings, saveSettings } from './utils/storage.js';
+import { unlockAudio } from './utils/audio.js';
 
 export default function App() {
   const [settings, setSettings] = useState(() => loadSettings(defaultSettings));
@@ -15,6 +16,17 @@ export default function App() {
   useEffect(() => {
     saveSettings(settings);
   }, [settings]);
+
+  // Global audio unlock on first user interaction
+  useEffect(() => {
+    const handler = () => unlockAudio();
+    window.addEventListener("pointerdown", handler, { once: true });
+    window.addEventListener("keydown", handler, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", handler);
+      window.removeEventListener("keydown", handler);
+    };
+  }, []);
 
   const bgClasses = {
     default: 'bg-gradient-to-br from-indigo-50 to-white',

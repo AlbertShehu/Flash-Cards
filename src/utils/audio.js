@@ -1,57 +1,55 @@
 // utils/audio.js
-let audioCtx = null;
+// Lazy AudioContext + unlock për mobile/iOS
+let ctx = null;
 
-export function getAudioContext() {
-  if (typeof window === 'undefined') return null;
-  if (!audioCtx) {
-    const Ctx = window.AudioContext || window.webkitAudioContext;
-    if (Ctx) audioCtx = new Ctx();
-  }
-  return audioCtx;
+function getAC() {
+  if (typeof window === "undefined") return null;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return null;
+  if (!ctx) ctx = new AC();
+  return ctx;
 }
 
-export async function resumeAudio() {
-  const ctx = getAudioContext();
-  if (ctx && ctx.state === 'suspended') { 
+export function getAudioContext() {
+  return getAC();
+}
+
+export async function unlockAudio() {
+  const ac = getAC();
+  if (!ac) return false;
+
+  // iOS / mobile: duam ta vendosim në "running"
+  if (ac.state === "suspended") {
     try { 
-      await ctx.resume(); 
+      await ac.resume(); 
     } catch (e) {
       console.warn('Audio context resume failed:', e);
     }
   }
+
+  // "Silent one-sample" për të hequr kufizimin në iOS
+  try {
+    const buffer = ac.createBuffer(1, 1, ac.sampleRate);
+    const src = ac.createBufferSource();
+    src.buffer = buffer;
+    src.connect(ac.destination);
+    src.start(0);
+    src.stop(0);
+    src.disconnect();
+  } catch (e) {
+    console.warn('Silent buffer creation failed:', e);
+  }
+  
+  return ac.state === "running";
 }
 
-// Mobile-friendly audio initialization
+export async function resumeAudio() {
+  return await unlockAudio();
+}
+
+// Mobile-friendly audio initialization (backward compatibility)
 export async function initAudioForMobile() {
-  if (typeof window === 'undefined') return false;
-  
-  try {
-    const ctx = getAudioContext();
-    if (!ctx) return false;
-    
-    // For mobile, we need user interaction to start audio
-    if (ctx.state === 'suspended') {
-      await ctx.resume();
-    }
-    
-    // Test audio with a very short, silent tone
-    const oscillator = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(ctx.destination);
-    
-    oscillator.frequency.setValueAtTime(440, ctx.currentTime);
-    gainNode.gain.setValueAtTime(0, ctx.currentTime);
-    
-    oscillator.start();
-    oscillator.stop(ctx.currentTime + 0.001);
-    
-    return true;
-  } catch (e) {
-    console.warn('Mobile audio initialization failed:', e);
-    return false;
-  }
+  return await unlockAudio();
 }
 
 // ✅ Lejon start të planifikuar me startAt (sekonda absolute në AudioContext)
@@ -114,7 +112,49 @@ export function playSuccessChime() {
   });
 }
 
-// Opsionale: klik i shkurtër për UI buttons
+// Beep i përgjithshëm
+export async function playTone(freq = 1000, durationMs = 200, volume = 0.4, type = "sine") {
+  const ac = getAC();
+  if (!ac) return;
+
+  // Sigurohu që është running
+  if (ac.state !== "running") {
+    try { 
+      await ac.resume(); 
+    } catch (e) {
+      console.warn('Audio context resume failed:', e);
+    }
+  }
+
+  const osc = ac.createOscillator();
+  const gain = ac.createGain();
+
+  osc.type = type;
+  osc.frequency.value = freq;
+
+  gain.gain.setValueAtTime(0, ac.currentTime);
+  gain.gain.linearRampToValueAtTime(volume, ac.currentTime + 0.01);
+  // mos e çoje në 0 fiks (disa mobile nuk e pëlqejnë 0 eksponencial)
+  gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + durationMs / 1000);
+
+  osc.connect(gain);
+  gain.connect(ac.destination);
+
+  osc.start();
+  osc.stop(ac.currentTime + durationMs / 1000);
+
+  // pastrimi
+  osc.onended = () => {
+    osc.disconnect();
+    gain.disconnect();
+  };
+}
+
+// convenience functions
+export const playSuccess = () => playTone(1100, 220, 0.5, "triangle");
+export const playClick = () => playTone(700, 80, 0.25, "square");
+
+// Opsionale: klik i shkurtër për UI buttons (backward compatibility)
 export function playClickTone() {
-  playHeartbeatBeep({ startHz: 900, endHz: 700, durationMs: 50, volume: 0.2, wave: 'triangle', bandHz: 800, q: 6 });
+  playClick();
 }

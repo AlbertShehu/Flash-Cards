@@ -7,7 +7,7 @@ import CalculationTable from '../../components/CalculationTable.jsx';
 import Footer from '../../components/Footer.jsx';
 import { getSpeedTable } from '../../utils/speed.js';
 import { generateNumber } from '../../utils/random.js';
-import { resumeAudio, initAudioForMobile } from '../../utils/audio.js';
+import { resumeAudio, initAudioForMobile, unlockAudio, playClick } from '../../utils/audio.js';
 import { addHistoryEntry } from '../../components/History.jsx';
 import { useEffect } from 'react';
 
@@ -65,8 +65,8 @@ export default function FlashCalculationTrainer({ settings }) {
   const start = useCallback(async () => {
     // Initialize audio for mobile compatibility
     if (settings.enableAudio) {
-      await initAudioForMobile();
-      await resumeAudio();
+      await unlockAudio(); // i rëndësishëm në mobile
+      playClick(); // play click sound on start
     }
     
     const newSequence = [];
