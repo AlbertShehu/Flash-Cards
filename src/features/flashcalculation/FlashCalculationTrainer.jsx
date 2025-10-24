@@ -7,7 +7,7 @@ import CalculationTable from '../../components/CalculationTable.jsx';
 import Footer from '../../components/Footer.jsx';
 import { getSpeedTable } from '../../utils/speed.js';
 import { generateNumber } from '../../utils/random.js';
-import { resumeAudio, initAudioForMobile, unlockAudio, playClick, hardUnlockAudio } from '../../utils/audio.js';
+import { resumeAudio, initAudioForMobile, unlockAudio, playClick } from '../../utils/audio.js';
 import { addHistoryEntry } from '../../components/History.jsx';
 import { useEffect } from 'react';
 
@@ -63,6 +63,11 @@ export default function FlashCalculationTrainer({ settings }) {
   }, []);
 
   const start = useCallback(async () => {
+    // Initialize audio for mobile compatibility
+    if (settings.enableAudio) {
+      await unlockAudio(); // i rëndësishëm në mobile
+      playClick(); // play click sound on start
+    }
     
     const newSequence = [];
     let runningSum = 0;
@@ -120,17 +125,6 @@ export default function FlashCalculationTrainer({ settings }) {
     setResult(formattedSum);
   }, [settings]);
 
-  // Handle start with proper audio unlock for iPhone 13
-  const handleStart = useCallback((e) => {
-    // 1) UNLOCK – brenda këtij event-i (pa 'await', pa 'setTimeout')
-    if (settings.enableAudio) {
-      hardUnlockAudio();
-      // 2) feedback i menjëherëshëm (opsional)
-      playClick();
-    }
-    // 3) fillo logjikën e app-it
-    start();
-  }, [settings.enableAudio, start]);
 
   const stop = useCallback(() => {
     setIsRunning(false);
@@ -268,8 +262,7 @@ export default function FlashCalculationTrainer({ settings }) {
             <motion.button 
               whileHover={{ scale: 1.05 }} 
               whileTap={{ scale: 0.95 }} 
-              onPointerDown={handleStart}
-              onClick={handleStart} 
+              onClick={start} 
               className="btn-primary relative group flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg w-full sm:w-auto"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}

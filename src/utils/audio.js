@@ -14,37 +14,33 @@ export function getAudioContext() {
   return getAC();
 }
 
-// Ky funksion DUHET thirrur direkt në onClick/onPointerDown, pa 'await' para tij
-export function hardUnlockAudio() {
+export async function unlockAudio() {
   const ac = getAC();
   if (!ac) return false;
 
-  try {
-    // iOS kërkon që krijimi/djegia të ndodhë menjëherë në event
-    if (ac.state === "suspended") {
-      // Mos e bëj 'await' – thirrje sync; iOS shpesh e lejon vetëm brenda gjestit
-      ac.resume().catch(() => {});
+  // iOS / mobile: duam ta vendosim në "running"
+  if (ac.state === "suspended") {
+    try { 
+      await ac.resume(); 
+    } catch (e) {
+      console.warn('Audio context resume failed:', e);
     }
-
-    // 1-sample "silent" buffer (klasiku për iOS)
-    const b = ac.createBuffer(1, 1, ac.sampleRate);
-    const s = ac.createBufferSource();
-    s.buffer = b;
-    s.connect(ac.destination);
-    // start/stop menjëherë – prapë brenda eventit
-    s.start(0);
-    s.stop(0);
-    s.disconnect();
-  } catch (e) {
-    console.warn('Hard unlock failed:', e);
   }
 
+  // "Silent one-sample" për të hequr kufizimin në iOS
+  try {
+    const buffer = ac.createBuffer(1, 1, ac.sampleRate);
+    const src = ac.createBufferSource();
+    src.buffer = buffer;
+    src.connect(ac.destination);
+    src.start(0);
+    src.stop(0);
+    src.disconnect();
+  } catch (e) {
+    console.warn('Silent buffer creation failed:', e);
+  }
+  
   return ac.state === "running";
-}
-
-// Backward compatibility
-export async function unlockAudio() {
-  return hardUnlockAudio();
 }
 
 export async function resumeAudio() {
@@ -116,15 +112,15 @@ export function playSuccessChime() {
   });
 }
 
-// Beep i përgjithshëm - mos përdor 'await' këtu; nëse duhet, thirri 'hardUnlockAudio()' PARA playTone
-export function playTone(freq = 1000, durMs = 160, vol = 0.4, type = "sine") {
+// Beep i përgjithshëm
+export async function playTone(freq = 1000, durationMs = 200, volume = 0.4, type = "sine") {
   const ac = getAC();
   if (!ac) return;
 
-  // mos përdor 'await' këtu; nëse duhet, thirri 'hardUnlockAudio()' PARA playTone
+  // Sigurohu që është running
   if (ac.state !== "running") {
     try { 
-      ac.resume(); 
+      await ac.resume(); 
     } catch (e) {
       console.warn('Audio context resume failed:', e);
     }
@@ -132,24 +128,25 @@ export function playTone(freq = 1000, durMs = 160, vol = 0.4, type = "sine") {
 
   const osc = ac.createOscillator();
   const gain = ac.createGain();
+
   osc.type = type;
   osc.frequency.value = freq;
 
-  const t0 = ac.currentTime;
-  gain.gain.setValueAtTime(0.0001, t0);
-  gain.gain.linearRampToValueAtTime(vol, t0 + 0.01);
-  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + durMs/1000);
+  gain.gain.setValueAtTime(0, ac.currentTime);
+  gain.gain.linearRampToValueAtTime(volume, ac.currentTime + 0.01);
+  // mos e çoje në 0 fiks (disa mobile nuk e pëlqejnë 0 eksponencial)
+  gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + durationMs / 1000);
 
   osc.connect(gain);
   gain.connect(ac.destination);
 
-  // përdor orën e AudioContext (jo 'Date.now')
-  osc.start(t0);
-  osc.stop(t0 + durMs/1000);
+  osc.start();
+  osc.stop(ac.currentTime + durationMs / 1000);
 
-  osc.onended = () => { 
-    osc.disconnect(); 
-    gain.disconnect(); 
+  // pastrimi
+  osc.onended = () => {
+    osc.disconnect();
+    gain.disconnect();
   };
 }
 

@@ -7,7 +7,6 @@ import FlashCalculationTrainer from './features/flashcalculation/FlashCalculatio
 import SettingsPanel from './features/settings/SettingsPanel.jsx';
 import { loadSettings, saveSettings } from './utils/storage.js';
 import { unlockAudio } from './utils/audio.js';
-import { AudioDebug } from './components/AudioDebug.jsx';
 
 export default function App() {
   const [settings, setSettings] = useState(() => loadSettings(defaultSettings));
@@ -59,11 +58,8 @@ export default function App() {
               <FlashCalculationTrainer settings={settings} />
             </motion.div>
           )}
-        </AnimatePresence>
-      </Header>
-      
-      {/* Audio Debug Panel - remove this after testing */}
-      <AudioDebug />
-    </>
+      </AnimatePresence>
+    </Header>
+  </>
   );
 }
