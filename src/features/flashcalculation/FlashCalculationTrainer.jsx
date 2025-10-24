@@ -62,18 +62,6 @@ export default function FlashCalculationTrainer({ settings }) {
     setPhase('showing');
   }, []);
 
-  // Handle start with proper audio unlock for iPhone 13
-  const handleStart = useCallback((e) => {
-    // 1) UNLOCK – brenda këtij event-i (pa 'await', pa 'setTimeout')
-    if (settings.enableAudio) {
-      hardUnlockAudio();
-      // 2) feedback i menjëherëshëm (opsional)
-      playClick();
-    }
-    // 3) fillo logjikën e app-it
-    start();
-  }, [settings.enableAudio, start]);
-
   const start = useCallback(async () => {
     
     const newSequence = [];
@@ -131,6 +119,18 @@ export default function FlashCalculationTrainer({ settings }) {
     
     setResult(formattedSum);
   }, [settings]);
+
+  // Handle start with proper audio unlock for iPhone 13
+  const handleStart = useCallback((e) => {
+    // 1) UNLOCK – brenda këtij event-i (pa 'await', pa 'setTimeout')
+    if (settings.enableAudio) {
+      hardUnlockAudio();
+      // 2) feedback i menjëherëshëm (opsional)
+      playClick();
+    }
+    // 3) fillo logjikën e app-it
+    start();
+  }, [settings.enableAudio, start]);
 
   const stop = useCallback(() => {
     setIsRunning(false);
