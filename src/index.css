@@ -67,8 +67,8 @@
 
 /* Responsive tweaks */
 @media (max-width: 768px) {
-  .number-display { font-size: 48px !important; }
-  .bead { width: 48px !important; height: 48px !important; font-size: 16px !important; }
+  .number-display { font-size: 48px; }
+  .bead { width: 48px; height: 48px; font-size: 16px; }
 }
 
 /* ------------------  TAILWIND @apply (në layer components) ------------------ */
