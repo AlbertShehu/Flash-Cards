@@ -7,6 +7,7 @@ import FlashCalculationTrainer from './features/flashcalculation/FlashCalculatio
 import SettingsPanel from './features/settings/SettingsPanel.jsx';
 import { loadSettings, saveSettings } from './utils/storage.js';
 import { unlockAudio } from './utils/audio.js';
+import { AudioDebug } from './components/AudioDebug.jsx';
 
 export default function App() {
   const [settings, setSettings] = useState(() => loadSettings(defaultSettings));
@@ -38,26 +39,31 @@ export default function App() {
   const bgClass = bgClasses[settings.setBackground] || bgClasses.default;
 
   return (
-    <Header tab={tab} setTab={setTab} bgClass={bgClass}>
-      <AnimatePresence mode="wait">
-        {tab === 'Settings' && (
-          <motion.div key="settings" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.3 }}>
-            <SettingsPanel settings={settings} onChange={setSettings} />
-          </motion.div>
-        )}
+    <>
+      <Header tab={tab} setTab={setTab} bgClass={bgClass}>
+        <AnimatePresence mode="wait">
+          {tab === 'Settings' && (
+            <motion.div key="settings" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.3 }}>
+              <SettingsPanel settings={settings} onChange={setSettings} />
+            </motion.div>
+          )}
 
-        {tab === 'History' && (
-          <motion.div key="history" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.3 }}>
-            <History />
-          </motion.div>
-        )}
+          {tab === 'History' && (
+            <motion.div key="history" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.3 }}>
+              <History />
+            </motion.div>
+          )}
 
-        {tab === 'FlashCalculation' && (
-          <motion.div key="flashcalculation" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.3 }}>
-            <FlashCalculationTrainer settings={settings} />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </Header>
+          {tab === 'FlashCalculation' && (
+            <motion.div key="flashcalculation" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.3 }}>
+              <FlashCalculationTrainer settings={settings} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Header>
+      
+      {/* Audio Debug Panel - remove this after testing */}
+      <AudioDebug />
+    </>
   );
 }
