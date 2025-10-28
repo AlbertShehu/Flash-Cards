@@ -23,7 +23,7 @@ A modern, interactive web application for training mental calculation skills usi
 - **React Router** - Client-side routing
 - **i18next** - Internationalization
 
-
+## Live on : https://flash-cards-9ed.pages.dev/
 
 ## 🎯 How to Use
 
