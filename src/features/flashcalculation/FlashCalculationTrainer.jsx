@@ -163,33 +163,35 @@ export default function FlashCalculationTrainer({ settings }) {
       animate={{ opacity: 1, y: 0 }} 
       className="space-y-8 relative"
     >
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-32 h-32 rounded-full opacity-10"
-            style={{
-              background: `linear-gradient(135deg, 
-                hsl(${i * 45}, 70%, 60%) 0%, 
-                hsl(${(i + 1) * 45}, 70%, 60%) 100%)`,
-              left: `${10 + i * 12}%`,
-              top: `${20 + (i % 3) * 30}%`
-            }}
-            animate={{
-              scale: [1, 1.2, 1],
-              rotate: [0, 180, 360],
-              opacity: [0.1, 0.2, 0.1]
-            }}
-            transition={{
-              duration: 8 + i * 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: i * 0.5
-            }}
-          />
-        ))}
-      </div>
+      {/* Background decorative elements - disabled during training for performance */}
+      {!isRunning && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-32 h-32 rounded-full opacity-10"
+              style={{
+                background: `linear-gradient(135deg, 
+                  hsl(${i * 45}, 70%, 60%) 0%, 
+                  hsl(${(i + 1) * 45}, 70%, 60%) 100%)`,
+                left: `${10 + i * 12}%`,
+                top: `${20 + (i % 3) * 30}%`
+              }}
+              animate={{
+                scale: [1, 1.2, 1],
+                rotate: [0, 180, 360],
+                opacity: [0.1, 0.2, 0.1]
+              }}
+              transition={{
+                duration: 8 + i * 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: i * 0.5
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="text-center relative z-10">
         <motion.h2 

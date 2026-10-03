@@ -73,6 +73,9 @@ export default function CalculationTable({
       return () => clearTimeout(audioDelay);
     }
   }, [phase, currentIndex, currentSequence.length, settings.enableAudio]);
+  // Disable heavy animations during showing/interval for better performance
+  const isTraining = phase === 'showing' || phase === 'interval';
+
   return (
     <motion.div 
       className="w-full max-w-4xl glass-effect rounded-3xl p-8 min-h-96 flex items-center justify-center relative overflow-hidden"
@@ -80,54 +83,58 @@ export default function CalculationTable({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
     >
-      {/* Animated background gradient */}
-      <motion.div
-        className="absolute inset-0 rounded-3xl opacity-20"
-        style={{
-          background: `linear-gradient(135deg, 
-            rgba(99, 102, 241, 0.1) 0%, 
-            rgba(139, 92, 246, 0.1) 25%, 
-            rgba(236, 72, 153, 0.1) 50%, 
-            rgba(16, 185, 129, 0.1) 75%, 
-            rgba(59, 130, 246, 0.1) 100%)`
-        }}
-        animate={{
-          background: [
-            `linear-gradient(135deg, 
+      {/* Animated background gradient - disabled during training for performance */}
+      {!isTraining && (
+        <motion.div
+          className="absolute inset-0 rounded-3xl opacity-20"
+          style={{
+            background: `linear-gradient(135deg, 
               rgba(99, 102, 241, 0.1) 0%, 
               rgba(139, 92, 246, 0.1) 25%, 
               rgba(236, 72, 153, 0.1) 50%, 
               rgba(16, 185, 129, 0.1) 75%, 
-              rgba(59, 130, 246, 0.1) 100%)`,
-            `linear-gradient(135deg, 
-              rgba(139, 92, 246, 0.1) 0%, 
-              rgba(236, 72, 153, 0.1) 25%, 
-              rgba(16, 185, 129, 0.1) 50%, 
-              rgba(59, 130, 246, 0.1) 75%, 
-              rgba(99, 102, 241, 0.1) 100%)`
-          ]
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "linear"
-        }}
-      />
+              rgba(59, 130, 246, 0.1) 100%)`
+          }}
+          animate={{
+            background: [
+              `linear-gradient(135deg, 
+                rgba(99, 102, 241, 0.1) 0%, 
+                rgba(139, 92, 246, 0.1) 25%, 
+                rgba(236, 72, 153, 0.1) 50%, 
+                rgba(16, 185, 129, 0.1) 75%, 
+                rgba(59, 130, 246, 0.1) 100%)`,
+              `linear-gradient(135deg, 
+                rgba(139, 92, 246, 0.1) 0%, 
+                rgba(236, 72, 153, 0.1) 25%, 
+                rgba(16, 185, 129, 0.1) 50%, 
+                rgba(59, 130, 246, 0.1) 75%, 
+                rgba(99, 102, 241, 0.1) 100%)`
+            ]
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        />
+      )}
 
       <AnimatePresence mode="wait">
         {phase === 'showing' && currentSequence.length > 0 && (
           <motion.div 
             key="showing"
             className="text-center relative z-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.05 }}
+            style={{ willChange: 'opacity' }}
           >
             <NumberDisplay 
               number={currentSequence[currentIndex]} 
               fontSize={settings.fontSize} 
               isVisible={true} 
+              speed={settings.speedFlashCalculation}
               onComplete={() => {}} 
             />
           </motion.div>
@@ -137,10 +144,10 @@ export default function CalculationTable({
           <motion.div 
             key="interval"
             className="text-center relative z-10"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.2 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.05 }}
           >
             {/* Interval phase - no animation, just empty space */}
           </motion.div>
