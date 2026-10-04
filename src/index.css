@@ -15,11 +15,8 @@
 .glow-animation { animation: glow 2s ease-in-out infinite; }
 
 .number-display {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.1));
+  color: #111827;
+  letter-spacing: 0.02em;
 }
 
 .bead {

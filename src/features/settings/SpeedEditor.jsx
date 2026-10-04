@@ -14,7 +14,7 @@ export default function SpeedEditor({ settings, onChange, isOpen, onClose }) {
   ];
 
   const handleSave = () => {
-    onChange(tempSettings);
+    onChange(normalizeSpeedValues(tempSettings));
     onClose();
   };
 
@@ -24,10 +24,22 @@ export default function SpeedEditor({ settings, onChange, isOpen, onClose }) {
   };
 
   const updateSpeedSetting = (level, type, value) => {
-    setTempSettings(prev => ({
-      ...prev,
-      [`${level}${type.charAt(0).toUpperCase() + type.slice(1)}`]: parseInt(value) || 0
-    }));
+    const key = `${level}${type.charAt(0).toUpperCase() + type.slice(1)}`;
+    // Allow empty while typing so 0 doesn't stick after delete
+    const next = value === '' ? '' : Math.max(0, parseInt(value, 10) || 0);
+    setTempSettings((prev) => ({ ...prev, [key]: next }));
+  };
+
+  const normalizeSpeedValues = (s) => {
+    const next = { ...s };
+    for (const level of speedLevels) {
+      for (const type of ['Display', 'Interval']) {
+        const key = `${level.key}${type}`;
+        const n = parseInt(next[key], 10);
+        next[key] = Number.isFinite(n) && n >= 0 ? n : 0;
+      }
+    }
+    return next;
   };
 
   if (!isOpen) return null;
@@ -70,14 +82,14 @@ export default function SpeedEditor({ settings, onChange, isOpen, onClose }) {
               <input
                 type="number"
                 min="0"
-                value={tempSettings[`${level.key}Display`] || 0}
+                value={tempSettings[`${level.key}Display`] ?? ''}
                 onChange={(e) => updateSpeedSetting(level.key, 'display', e.target.value)}
                 className="input text-center"
               />
               <input
                 type="number"
                 min="0"
-                value={tempSettings[`${level.key}Interval`] || 0}
+                value={tempSettings[`${level.key}Interval`] ?? ''}
                 onChange={(e) => updateSpeedSetting(level.key, 'interval', e.target.value)}
                 className="input text-center"
               />
